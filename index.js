@@ -33,10 +33,36 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      // console.log(id);
+      const query = { _id: new ObjectId(id) };
+      const result = await database.findOne(query);
+      res.send(result);
+    });
+
     //POST
     app.post("/users", async (req, res) => {
       // console.log(req.body);
       const result = await database.insertOne(req.body);
+      res.send(result);
+    });
+
+    //UPDATE
+    app.put("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: false };
+      const updateDoc = {
+        $set: {
+          name: req.body.name,
+          email: req.body.email,
+          gender: req.body.gender,
+          status: req.body.status,
+        },
+      };
+
+      const result = await database.updateOne(filter, updateDoc, options);
       res.send(result);
     });
 
